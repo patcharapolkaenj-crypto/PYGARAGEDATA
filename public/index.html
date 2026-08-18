@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">PY GARAGE MENU</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="login-screen" class="login-shell active">
+  <div class="login-panel">
+    <div class="login-brand">
+      <span class="brand-mark">◆</span>
+      <div>
+        <div class="brand-name" id="brand-name-login">PY GARAGE MENU</div>
+        <div class="brand-sub" id="brand-sub-login">Rental Ops</div>
+      </div>
+    </div>
+
+    <h1>เข้าสู่ระบบ</h1>
+    <p>กรุณาเข้าสู่ระบบเพื่อใช้งานระบบจัดการเช่ารถ</p>
+
+    <form id="login-form" class="login-form">
+      <label>
+        Username
+        <input type="text" id="login-username" name="username" placeholder="กรอก username" required>
+      </label>
+      <label>
+        Password
+        <input type="password" id="login-password" name="password" placeholder="กรอก password" required>
+      </label>
+      <label class="remember-row">
+        <input type="checkbox" id="remember-me" name="remember_me">
+        <span>Remember me</span>
+      </label>
+      <button type="submit" class="btn primary login-btn">เข้าสู่ระบบ</button>
+    </form>
+  </div>
+</div>
+
+<div class="app hidden" id="app-shell">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">◆</span>
+      <div class="brand-text">
+        <div class="brand-name" id="brand-name-sidebar">PY GARAGE MENU</div>
+        <div class="brand-sub" id="brand-sub-sidebar">Rental Ops</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <button class="nav-item active" data-view="dashboard"><span class="nav-idx">01</span> ภาพรวม</button>
+      <button class="nav-item" data-view="rentals"><span class="nav-idx">02</span> รายการเช่า</button>
+      <button class="nav-item" data-view="calendar"><span class="nav-idx">03</span> ปฏิทิน</button>
+      <button class="nav-item" data-view="vehicles"><span class="nav-idx">04</span> รถทั้งหมด</button>
+      <button class="nav-item" data-view="customers"><span class="nav-idx">05</span> ลูกค้า</button>
+      <button class="nav-item" data-view="history"><span class="nav-idx">06</span> ประวัติการเช่า</button>
+      <button class="nav-item" data-view="employees"><span class="nav-idx">07</span> พนักงาน</button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="clock" id="clock">--:--</div>
+      <div class="date" id="today">--</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ===== DASHBOARD ===== -->
+    <section class="view active" id="view-dashboard">
+      <header class="view-head">
+        <h1>ภาพรวมกิจการ</h1>
+        <p>สรุปสถานะรถ ลูกค้า และรายการเช่าแบบเรียลไทม์</p>
+      </header>
+
+      <div class="stat-grid">
+        <div class="stat-card accent"><div class="stat-label">กำลังเช่าอยู่</div><div class="stat-value" id="stat-active">0</div></div>
+        <div class="stat-card"><div class="stat-label">เกินกำหนดคืน</div><div class="stat-value warn" id="stat-overdue">0</div></div>
+        <div class="stat-card"><div class="stat-label">รถว่างพร้อมปล่อยเช่า</div><div class="stat-value" id="stat-available">0</div></div>
+        <div class="stat-card"><div class="stat-label">รถทั้งหมด</div><div class="stat-value" id="stat-vehicles">0</div></div>
+        <div class="stat-card"><div class="stat-label">ลูกค้าในระบบ</div><div class="stat-value" id="stat-customers">0</div></div>
+        <div class="stat-card"><div class="stat-label">ลูกค้าติด Blacklist</div><div class="stat-value warn" id="stat-blacklist">0</div></div>
+        <div class="stat-card" style="grid-column: span 3"><div class="stat-label">รายได้เดือนนี้ (บาท)</div><div class="stat-value" id="stat-revenue">0</div></div>
+      </div>
+
+      <div class="panel" style="margin-bottom: 22px;">
+        <div class="panel-head"><h2>ต้องส่งรถภายใน 3 วัน</h2></div>
+        <div class="table-wrap"><table id="table-send-soon"><tbody></tbody></table></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h2>ต้องคืนภายใน 3 วัน</h2></div>
+        <div class="table-wrap"><table id="table-due-soon"><tbody></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- ===== RENTALS ===== -->
+    <section class="view" id="view-rentals">
+      <header class="view-head">
+        <h1>รายการเช่า</h1>
+        <p>บันทึกวันเวลาส่งมอบ วันเวลากำหนดคืน และสถานะการเช่า — ปรับ/ยกเลิกการจองได้ตลอด</p>
+        <button class="btn primary" id="btn-new-rental">+ สร้างรายการเช่าใหม่</button>
+      </header>
+
+      <div class="filter-row">
+        <select id="filter-rental-status">
+          <option value="">ทุกสถานะ</option>
+          <option value="active">กำลังเช่า</option>
+          <option value="returned">คืนแล้ว</option>
+          <option value="cancelled">ยกเลิก</option>
+        </select>
+      </div>
+
+      <div class="table-wrap">
+        <table id="table-rentals">
+          <thead><tr><th>ลูกค้า</th><th>รถ</th><th>ส่งมอบ</th><th>กำหนดคืน</th><th>ราคารวม</th><th>สถานะ</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== CALENDAR ===== -->
+    <section class="view" id="view-calendar">
+      <header class="view-head">
+        <h1>ปฏิทินการเช่า</h1>
+        <p>แสดงเฉพาะวันที่รับรถและวันที่คืนรถ พร้อมเวลาในวันนั้น ๆ ของแต่ละรายการ</p>
+      </header>
+      <div class="panel calendar-panel">
+        <div class="calendar-month-wrap">
+          <div class="calendar-month-title" id="calendar-month-title">เดือนนี้</div>
+          <div class="calendar-week-header" id="calendar-week-header"></div>
+          <div class="calendar-month-grid" id="calendar-month-grid"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== VEHICLES ===== -->
+    <section class="view" id="view-vehicles">
+      <header class="view-head">
+        <h1>รถทั้งหมด</h1>
+        <p>บิ๊กไบค์และรถยนต์ในระบบ พร้อมสถานะการใช้งาน — คลิกที่การ์ดเพื่อดูว่าใครเช่าอยู่</p>
+        <button class="btn primary" id="btn-new-vehicle">+ เพิ่มรถ</button>
+      </header>
+
+      <div class="filter-row">
+        <select id="filter-vehicle-type">
+          <option value="">ทุกประเภท</option>
+          <option value="bike">บิ๊กไบค์</option>
+          <option value="car">รถยนต์</option>
+        </select>
+        <select id="filter-vehicle-status">
+          <option value="">ทุกสถานะ</option>
+          <option value="available">ว่าง</option>
+          <option value="rented">ถูกเช่าอยู่</option>
+          <option value="maintenance">ซ่อมบำรุง</option>
+        </select>
+      </div>
+
+      <div class="card-grid" id="vehicle-grid"></div>
+    </section>
+
+    <!-- ===== CUSTOMERS ===== -->
+    <section class="view" id="view-customers">
+      <header class="view-head">
+        <h1>ลูกค้า</h1>
+        <p>ข้อมูลติดต่อ โซเชียล และสถานะ Blacklist ของลูกค้าแต่ละราย</p>
+        <button class="btn primary" id="btn-new-customer">+ เพิ่มลูกค้า</button>
+      </header>
+
+      <div class="filter-row">
+        <input type="text" id="search-customer" placeholder="ค้นหาชื่อ / เบอร์โทร / เลขบัตร...">
+      </div>
+
+      <div class="card-grid" id="customer-grid"></div>
+    </section>
+
+    <!-- ===== HISTORY ===== -->
+    <section class="view" id="view-history">
+      <header class="view-head">
+        <h1>ประวัติการเช่าทั้งหมด</h1>
+        <p>ข้อมูลลูกค้า ข้อมูลรถ และระยะเวลาเช่า ตั้งแต่วันที่-เวลาแรกจนถึงปัจจุบัน</p>
+      </header>
+
+      <div class="filter-row">
+        <select id="filter-history-status">
+          <option value="">ทุกสถานะ</option>
+          <option value="active">กำลังเช่า</option>
+          <option value="returned">คืนแล้ว</option>
+          <option value="cancelled">ยกเลิก</option>
+        </select>
+        <input type="text" id="search-history" placeholder="ค้นหาชื่อลูกค้า / ทะเบียนรถ...">
+      </div>
+
+      <div class="table-wrap">
+        <table id="table-history">
+          <thead><tr><th>ลูกค้า</th><th>รถ</th><th>ส่งมอบ</th><th>กำหนดคืน</th><th>ระยะเวลา</th><th>ราคารวม</th><th>สถานะ</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== EMPLOYEES ===== -->
+    <section class="view" id="view-employees">
+      <header class="view-head">
+        <h1>รายชื่อพนักงาน</h1>
+        <p>บัญชีผู้ใช้งานและข้อมูลพนักงานทั้งหมด รวมถึงรายละเอียดส่วนตัวและสิทธิ์การใช้งาน</p>
+        <button class="btn primary" id="btn-new-employee">+ เพิ่มพนักงาน</button>
+      </header>
+
+      <div class="filter-row">
+        <input type="text" id="search-employee" placeholder="ค้นหาพนักงาน / เบอร์ / อีเมล / รหัสบัตร...">
+      </div>
+
+      <div class="card-grid" id="employee-grid"></div>
+    </section>
+
+
+  </main>
+</div>
+
+<!-- ===== MODAL ===== -->
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal" id="modal">
+    <div class="modal-head">
+      <h3 id="modal-title">หัวข้อ</h3>
+      <button class="modal-close" id="modal-close">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
